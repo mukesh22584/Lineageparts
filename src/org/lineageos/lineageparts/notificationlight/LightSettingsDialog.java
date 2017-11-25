@@ -45,7 +45,6 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
-import org.lineageos.internal.notification.LightsCapabilities;
 import org.lineageos.lineageparts.R;
 import org.lineageos.lineageparts.notificationlight.ColorPickerView.OnColorChangedListener;
 
@@ -174,8 +173,8 @@ public class LightSettingsDialog extends AlertDialog implements
         setView(layout);
         setTitle(R.string.edit_light_settings);
 
-        if (!LightsCapabilities.supports(
-                mContext, LightsCapabilities.LIGHTS_RGB_NOTIFICATION_LED)) {
+        if (!mNotificationManager.doLightsSupport(
+                NotificationManager.LIGHTS_RGB_NOTIFICATION_LED)) {
             mColorPicker.setVisibility(View.GONE);
             mColorPanel.setVisibility(View.GONE);
             mLightsDialogDivider.setVisibility(View.GONE);

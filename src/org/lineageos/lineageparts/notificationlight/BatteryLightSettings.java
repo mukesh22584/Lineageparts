@@ -16,6 +16,7 @@
 
 package org.lineageos.lineageparts.notificationlight;
 
+import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import org.lineageos.internal.notification.LightsCapabilities;
 import org.lineageos.lineageparts.R;
 import org.lineageos.lineageparts.SettingsPreferenceFragment;
 
@@ -58,8 +58,6 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final Context context = getContext();
-
         addPreferencesFromResource(R.xml.battery_light_settings);
         getActivity().getActionBar().setTitle(R.string.battery_light_title);
 
@@ -70,14 +68,15 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
         mLightEnabledPref = (LineageSystemSettingSwitchPreference) prefSet.findPreference(LIGHT_ENABLED_PREF);
         mPulseEnabledPref = (LineageSystemSettingSwitchPreference) prefSet.findPreference(PULSE_ENABLED_PREF);
 
-        if (!LightsCapabilities.supports(context, LightsCapabilities.LIGHTS_PULSATING_LED) ||
-                LightsCapabilities.supports(
-                        context, LightsCapabilities.LIGHTS_SEGMENTED_BATTERY_LED)) {
+        final NotificationManager nm = getContext().getSystemService(NotificationManager.class);
+
+        if (!nm.doLightsSupport(NotificationManager.LIGHTS_PULSATING_LED) ||
+                nm.doLightsSupport(NotificationManager.LIGHTS_SEGMENTED_BATTERY_LED)) {
             mGeneralPrefs.removePreference(mPulseEnabledPref);
         }
 
         // Does the device support changing battery LED colors?
-        if (LightsCapabilities.supports(context, LightsCapabilities.LIGHTS_RGB_BATTERY_LED)) {
+        if (nm.doLightsSupport(NotificationManager.LIGHTS_RGB_BATTERY_LED)) {
             setHasOptionsMenu(true);
 
             // Low, Medium and full color preferences
@@ -147,7 +146,8 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (LightsCapabilities.supports(getContext(), LightsCapabilities.LIGHTS_RGB_BATTERY_LED)) {
+        final NotificationManager nm = getContext().getSystemService(NotificationManager.class);
+        if (nm.doLightsSupport(NotificationManager.LIGHTS_RGB_BATTERY_LED)) {
             menu.add(0, MENU_RESET, 0, R.string.reset)
                     .setIcon(R.drawable.ic_settings_backup_restore)
                     .setAlphabeticShortcut('r')
