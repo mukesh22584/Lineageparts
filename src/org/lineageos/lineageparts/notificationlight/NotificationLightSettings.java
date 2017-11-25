@@ -42,7 +42,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import org.lineageos.internal.notification.LightsCapabilities;
 import org.lineageos.lineageparts.widget.PackageListAdapter;
 import org.lineageos.lineageparts.widget.PackageListAdapter.PackageItem;
 import org.lineageos.lineageparts.R;
@@ -58,6 +57,7 @@ import lineageos.preference.SystemSettingSwitchPreference;
 import lineageos.providers.LineageSettings;
 import lineageos.util.ColorUtils;
 
+/*
 public class NotificationLightSettings extends SettingsPreferenceFragment implements
         Preference.OnPreferenceChangeListener, ApplicationLightPreference.ItemLongClickListener {
     private static final String TAG = "NotificationLightSettings";
@@ -74,7 +74,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
     private int mDefaultLedOff;
     private PackageManager mPackageManager;
     private PreferenceGroup mApplicationPrefList;
-    private NotificationBrightnessDialog mNotificationBrightnessDialog;
+    private PreferenceScreen mNotificationLedBrightnessPref;
     private SystemSettingSwitchPreference mEnabledPref;
     private LineageSystemSettingSwitchPreference mCustomEnabledPref;
     private LineageSystemSettingSwitchPreference mScreenOnLightsPref;
@@ -92,8 +92,6 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final Context context = getContext();
 
         addPreferencesFromResource(R.xml.notification_light_settings);
         getActivity().getActionBar().setTitle(R.string.notification_light_title);
@@ -113,10 +111,9 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
         mDefaultLedOff = resources.getInteger(
                 com.android.internal.R.integer.config_defaultNotificationLedOff);
 
-        mLedCanPulse = LightsCapabilities.supports(
-                context, LightsCapabilities.LIGHTS_PULSATING_LED);
-        mMultiColorLed = LightsCapabilities.supports(
-                context, LightsCapabilities.LIGHTS_RGB_NOTIFICATION_LED);
+        final NotificationManager nm = getContext().getSystemService(NotificationManager.class);
+        mLedCanPulse = nm.doLightsSupport(NotificationManager.LIGHTS_PULSATING_LED);
+        mMultiColorLed = nm.doLightsSupport(NotificationManager.LIGHTS_RGB_NOTIFICATION_LED);
 
         mEnabledPref = (SystemSettingSwitchPreference)
                 findPreference(Settings.System.NOTIFICATION_LIGHT_PULSE);
@@ -128,7 +125,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
                 findPreference(LineageSettings.System.NOTIFICATION_LIGHT_COLOR_AUTO);
 
         // Advanced light settings
-        mNotificationBrightnessDialog = (NotificationBrightnessDialog)
+        mNotificationLedBrightnessPref = (PreferenceScreen)
                 findPreference(LineageSettings.System.NOTIFICATION_LIGHT_BRIGHTNESS_LEVEL);
         mScreenOnLightsPref = (LineageSystemSettingSwitchPreference)
                 findPreference(LineageSettings.System.NOTIFICATION_LIGHT_SCREEN_ON);
@@ -137,7 +134,9 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
                 findPreference(LineageSettings.System.NOTIFICATION_LIGHT_PULSE_CUSTOM_ENABLE);
         if (!LightsCapabilities.supports(
                 context, LightsCapabilities.LIGHTS_ADJUSTABLE_NOTIFICATION_LED_BRIGHTNESS)) {
-            mAdvancedPrefs.removePreference(mNotificationBrightnessDialog);
+            mAdvancedPrefs.removePreference(mNotificationLedBrightnessPref);
+        } else {
+            mNotificationLedBrightnessPref.setOnPreferenceChangeListener(this);
         }
         if (!mLedCanPulse && !mMultiColorLed) {
             mGeneralPrefs.removePreference(mDefaultPref);
@@ -294,6 +293,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
             }
 
             /* Display a pref explaining how to add apps */
+            /*
             if (mApplicationPrefList.getPreferenceCount() == 0) {
                 String summary = getResources().getString(
                         R.string.notification_light_no_apps_summary);
@@ -388,6 +388,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
      * @param timeon
      * @param timeoff
      */
+    /*
     protected void updateValues(String packageName, Integer color, Integer timeon, Integer timeoff) {
         ContentResolver resolver = getActivity().getContentResolver();
 
@@ -455,6 +456,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
 
     public boolean onPreferenceChange(Preference preference, Object objValue) {
         if (preference == mEnabledPref || preference == mCustomEnabledPref ||
+                preference == mNotificationLedBrightnessPref ||
                 preference == mScreenOnLightsPref ||
                 preference == mAutoGenerateColors) {
             getActivity().invalidateOptionsMenu();
@@ -494,6 +496,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
     /**
      * Utility classes and supporting methods
      */
+    /*
     @Override
     public Dialog onCreateDialog(int id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -526,6 +529,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
     /**
      * Application class
      */
+    /*
     private static class Package {
         public String name;
         public Integer color;
@@ -539,6 +543,7 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
          * @param timeon
          * @param timeoff
          */
+        /*
         public Package(String name, Integer color, Integer timeon, Integer timeoff) {
             this.name = name;
             this.color = color;
@@ -596,3 +601,4 @@ public class NotificationLightSettings extends SettingsPreferenceFragment implem
         }
     };
 }
+*/
